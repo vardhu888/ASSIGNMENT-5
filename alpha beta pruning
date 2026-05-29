@@ -1,0 +1,56 @@
+def alpha_beta(game, depth, alpha, beta, maximizing):
+
+    result = game.winner()
+
+    if result == 'X':
+        return 1
+
+    if result == 'O':
+        return -1
+
+    if result == 'Draw':
+        return 0
+
+    if maximizing:
+
+        value = -math.inf
+
+        for move in game.available_moves():
+            game.make_move(move)
+
+            value = max(
+                value,
+                alpha_beta(game, depth+1,
+                           alpha, beta, False)
+            )
+
+            game.undo_move(move)
+
+            alpha = max(alpha, value)
+
+            if alpha >= beta:
+                break
+
+        return value
+
+    else:
+
+        value = math.inf
+
+        for move in game.available_moves():
+            game.make_move(move)
+
+            value = min(
+                value,
+                alpha_beta(game, depth+1,
+                           alpha, beta, True)
+            )
+
+            game.undo_move(move)
+
+            beta = min(beta, value)
+
+            if beta <= alpha:
+                break
+
+        return value
