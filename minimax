@@ -1,0 +1,32 @@
+def minimax(game, maximizing):
+
+    result = game.winner()
+
+    if result == 'X':
+        return 1
+    elif result == 'O':
+        return -1
+    elif result == 'Draw':
+        return 0
+
+    if maximizing:
+        best = -math.inf
+
+        for move in game.available_moves():
+            game.make_move(move)
+            score = minimax(game, False)
+            game.undo_move(move)
+            best = max(best, score)
+
+        return best
+
+    else:
+        best = math.inf
+
+        for move in game.available_moves():
+            game.make_move(move)
+            score = minimax(game, True)
+            game.undo_move(move)
+            best = min(best, score)
+
+        return best
