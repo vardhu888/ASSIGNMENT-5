@@ -1,0 +1,140 @@
+# AI Travel Planner
+
+# ----------------------------
+# Knowledge Bases
+# ----------------------------
+
+tourist_places = {
+    "Goa": {
+        "type": "Beach",
+        "places": ["Baga Beach", "Calangute Beach", "Fort Aguada"]
+    },
+    "Ooty": {
+        "type": "Hill Station",
+        "places": ["Botanical Garden", "Ooty Lake", "Doddabetta Peak"]
+    },
+    "Hyderabad": {
+        "type": "Historical",
+        "places": ["Charminar", "Golconda Fort", "Salar Jung Museum"]
+    }
+}
+
+food_kb = {
+    "Goa": ["Veg Thali", "Goan Curry"],
+    "Ooty": ["South Indian Meals", "Dosa"],
+    "Hyderabad": ["Hyderabadi Biryani", "Veg Meals"]
+}
+
+hotel_kb = {
+    "Goa": {"hotel": "Sea View Hotel", "cost": 2500},
+    "Ooty": {"hotel": "Hill Resort", "cost": 2000},
+    "Hyderabad": {"hotel": "City Inn", "cost": 1800}
+}
+
+transport_cost = {
+    ("Hyderabad", "Goa"): 5000,
+    ("Hyderabad", "Ooty"): 4000,
+    ("Goa", "Ooty"): 3500
+}
+
+# ----------------------------
+# Recommendation Engine
+# ----------------------------
+
+def recommend_destination(interest):
+
+    for city, info in tourist_places.items():
+        if info["type"].lower() == interest.lower():
+            return city
+
+    return None
+
+
+# ----------------------------
+# Cost Estimation
+# ----------------------------
+
+def estimate_cost(source, destination, days):
+
+    travel = transport_cost.get((source, destination), 3000)
+
+    hotel = hotel_kb[destination]["cost"] * days
+
+    food = 500 * days
+
+    total = travel + hotel + food
+
+    return travel, hotel, food, total
+
+
+# ----------------------------
+# Travel Planner
+# ----------------------------
+
+def generate_plan(source,
+                  interest,
+                  days,
+                  budget):
+
+    destination = recommend_destination(interest)
+
+    if destination is None:
+        return "No destination found."
+
+    travel, hotel, food, total = estimate_cost(
+        source,
+        destination,
+        days
+    )
+
+    if total > budget:
+        return f"Trip exceeds budget. Estimated cost = ₹{total}"
+
+    plan = {
+        "Destination": destination,
+        "Places": tourist_places[destination]["places"],
+        "Food": food_kb[destination],
+        "Hotel": hotel_kb[destination]["hotel"],
+        "Total Cost": total
+    }
+
+    return plan
+
+
+# ----------------------------
+# Main Program
+# ----------------------------
+
+source = input("Enter Source City: ")
+interest = input("Interest (Beach/Hill Station/Historical): ")
+days = int(input("Number of Days: "))
+budget = int(input("Budget: "))
+
+result = generate_plan(
+    source,
+    interest,
+    days,
+    budget
+)
+
+print("\n===== AI TRAVEL PLAN =====")
+
+if isinstance(result, dict):
+
+    print("Destination:", result["Destination"])
+
+    print("\nPlaces to Visit:")
+    for p in result["Places"]:
+        print("-", p)
+
+    print("\nRecommended Food:")
+    for f in result["Food"]:
+        print("-", f)
+
+    print("\nHotel:")
+    print(result["Hotel"])
+
+    print("\nEstimated Cost: ₹", result["Total Cost"])
+
+else:
+    print(result)
