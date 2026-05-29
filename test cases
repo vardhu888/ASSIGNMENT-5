@@ -1,0 +1,11 @@
+game = TicTacToe()
+
+game.board = [
+    'X','X',' ',
+    'O','O',' ',
+    ' ',' ',' '
+]
+
+game.current_player = 'X'
+
+print(minimax_best_move(game))
