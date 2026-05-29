@@ -1,0 +1,26 @@
+class MCTSNode:
+
+    def __init__(self, state, parent=None):
+
+        self.state = state
+        self.parent = parent
+        self.children = []
+        self.visits = 0
+        self.wins = 0
+
+    def is_fully_expanded(self):
+        return len(self.children) == len(
+            self.state.available_moves()
+        )
+
+    def best_child(self, c=1.414):
+
+        return max(
+            self.children,
+            key=lambda child:
+            child.wins / (child.visits + 1e-6)
+            + c * math.sqrt(
+                math.log(self.visits + 1)
+                / (child.visits + 1e-6)
+            )
+        )
