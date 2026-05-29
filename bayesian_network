@@ -1,0 +1,105 @@
+# Install pgmpy
+!pip install pgmpy --quiet
+
+# Import libraries
+from pgmpy.models import DiscreteBayesianNetwork
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
+
+print("Libraries Imported Successfully")
+
+# Create Bayesian Network
+model = DiscreteBayesianNetwork([
+    ('COVID', 'Fever'),
+    ('COVID', 'Cough'),
+    ('COVID', 'TestResult')
+])
+
+print("Network Created")
+
+# Define CPDs
+
+# COVID probability
+cpd_covid = TabularCPD(
+    variable='COVID',
+    variable_card=2,
+    values=[[0.95], [0.05]]
+)
+
+# Fever depends on COVID
+cpd_fever = TabularCPD(
+    variable='Fever',
+    variable_card=2,
+    values=[
+        [0.9, 0.2],
+        [0.1, 0.8]
+    ],
+    evidence=['COVID'],
+    evidence_card=[2]
+)
+
+# Cough depends on COVID
+cpd_cough = TabularCPD(
+    variable='Cough',
+    variable_card=2,
+    values=[
+        [0.85, 0.3],
+        [0.15, 0.7]
+    ],
+    evidence=['COVID'],
+    evidence_card=[2]
+)
+
+# TestResult depends on COVID
+cpd_test = TabularCPD(
+    variable='TestResult',
+    variable_card=2,
+    values=[
+        [0.95, 0.1],
+        [0.05, 0.9]
+    ],
+    evidence=['COVID'],
+    evidence_card=[2]
+)
+
+# Add CPDs to model
+model.add_cpds(
+    cpd_covid,
+    cpd_fever,
+    cpd_cough,
+    cpd_test
+)
+
+# Validate Model
+print("Checking Model...")
+print(model.check_model())
+
+# Create inference engine
+inference = VariableElimination(model)
+
+# Query 1
+print("\nProbability of COVID given Fever and Cough:\n")
+
+result1 = inference.query(
+    variables=['COVID'],
+    evidence={
+        'Fever': 1,
+        'Cough': 1
+    }
+)
+
+print(result1)
+
+# Query 2
+print("\nProbability of COVID given Fever, Cough and Positive Test:\n")
+
+result2 = inference.query(
+    variables=['COVID'],
+    evidence={
+        'Fever': 1,
+        'Cough': 1,
+        'TestResult': 1
+    }
+)
+
+print(result2)
