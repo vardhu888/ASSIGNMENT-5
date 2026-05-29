@@ -1,0 +1,29 @@
+def evaluate(game):
+
+    lines = [
+        (0,1,2),(3,4,5),(6,7,8),
+        (0,3,6),(1,4,7),(2,5,8),
+        (0,4,8),(2,4,6)
+    ]
+
+    score = 0
+
+    for a,b,c in lines:
+
+        line = [game.board[a],
+                game.board[b],
+                game.board[c]]
+
+        if line.count('X') == 2 and line.count(' ') == 1:
+            score += 10
+
+        elif line.count('O') == 2 and line.count(' ') == 1:
+            score -= 10
+
+        elif line.count('X') == 1 and line.count(' ') == 2:
+            score += 1
+
+        elif line.count('O') == 1 and line.count(' ') == 2:
+            score -= 1
+
+    return score
